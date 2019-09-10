@@ -31,10 +31,12 @@ open class SRTConnection: NSObject {
         outgoingSocket = SRTOutgoingSocket()
         outgoingSocket?.delegate = self
         ((try? outgoingSocket?.connect(addr, options: options)) as ()??)
-
+        
+        #if CONNECTION_INCOMMING
         incomingSocket = SRTIncomingSocket()
         incomingSocket?.delegate = self
         ((try? incomingSocket?.connect(addr, options: options)) as ()??)
+        #endif
     }
 
     public func close() {
@@ -67,8 +69,14 @@ open class SRTConnection: NSObject {
 extension SRTConnection: SRTSocketDelegate {
     // MARK: SRTSocketDelegate
     func status(_ socket: SRTSocket, status: SRT_SOCKSTATUS) {
+        #if CONNECTION_INCOMMING
         if let incomingSocket = incomingSocket, let outgoingSocket = outgoingSocket {
             connected = incomingSocket.status == SRTS_CONNECTED && outgoingSocket.status == SRTS_CONNECTED
         }
+        #else
+        if let outgoingSocket = outgoingSocket {
+            connected = outgoingSocket.status == SRTS_CONNECTED
+        }
+        #endif
     }
 }

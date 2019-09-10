@@ -3,7 +3,7 @@ import Foundation
 import AVFoundation
 
 open class SRTStream: NetStream {
-    public enum ReadyState: UInt8 {
+    @objc public enum ReadyState: Int {
         case initialized = 0
         case open        = 1
         case play        = 2
@@ -24,7 +24,7 @@ open class SRTStream: NetStream {
         return tsWriter
     }()
 
-    public private(set) var readyState: ReadyState = .initialized {
+    @objc dynamic public private(set) var readyState: ReadyState = .initialized {
         didSet {
             guard oldValue != readyState else { return }
 
